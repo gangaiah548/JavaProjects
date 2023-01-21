@@ -24,11 +24,6 @@ app.use("/hello", (req, res) => {
 });
 app.use("/surveys", require("./survey.routes"));
 
-// This route will handle all the requests that are
-// not handled by any other route handler. In
-// this hanlder we will redirect the user to
-// an error page with NOT FOUND message and status
-// code as 404 (HTTP status code for NOT found)
 app.all("*", (req, res) => {
   res.status(404).json({ error: "End point not found" });
 });
