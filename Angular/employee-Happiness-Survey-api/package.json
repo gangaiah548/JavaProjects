@@ -1,13 +1,12 @@
 {
-  "name": "employee-satisfaction-survey-api",
+  "name": "employee-Happiness-survey-api",
   "version": "1.0.0",
-  "description": "Employee satisfaction survey api",
+  "description": "Employee Happiness survey api",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js"
   },
-  "author": "Sihem BOUHENNICHE",
-  "license": "ISC",
+  "author": "Gangaiah Lakkakula",
   "dependencies": {
     "express": "^4.18.2",
     "mongoose": "^6.7.4",
