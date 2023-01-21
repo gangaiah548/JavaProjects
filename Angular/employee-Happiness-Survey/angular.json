@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "employee-satisfaction-survey-app": {
+    "employee-Happieness-survey-app": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/employee-satisfaction-survey-app",
+            "outputPath": "dist/employee-Happieness-survey-app",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -57,10 +57,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "employee-satisfaction-survey-app:build:production"
+              "browserTarget": "employee-Happieness-survey-app:build:production"
             },
             "development": {
-              "browserTarget": "employee-satisfaction-survey-app:build:development"
+              "browserTarget": "employee-Happieness-survey-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -68,7 +68,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "employee-satisfaction-survey-app:build"
+            "browserTarget": "employee-Happieness-survey-app:build"
           }
         },
         "test": {
