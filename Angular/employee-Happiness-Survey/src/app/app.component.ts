@@ -68,7 +68,7 @@ const surveyJson = {
             },
             {
               value: 'HealthBenefits',
-              text: 'Health care benefits',
+              text: 'Health care & Insurance benefits',
             },
             {
               value: 'PhysicalWorkEnvironment',
@@ -86,7 +86,7 @@ const surveyJson = {
         },
         {
           name: 'ValuedAtWork',
-          title: 'Do you feel valued at work?',
+          title: 'Do you getting satisfied work?',
           type: 'radiogroup',
           isRequired: true,
           choices: ['Yes', 'No'],
