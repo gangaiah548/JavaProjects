@@ -1,0 +1,142 @@
+{
+	"info": {
+		"_postman_id": "f4052326-f6ac-41c5-b194-3cbb6cf5a0c7",
+		"name": "state-machine",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Deploy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/simple_task (1).bpmn"
+						},
+						{
+							"key": "_key",
+							"value": "testProcPool6",
+							"type": "text"
+						},
+						{
+							"key": "title",
+							"value": "POS",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "POS BPMN Flow",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "active",
+							"type": "text"
+						},
+						{
+							"key": "poolSize",
+							"value": "10",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/deploy",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"deploy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "health-check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/v1/healthCheck",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"healthCheck"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "start-process",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"_key\": \"testProcPool6\",\r\n    \"execMode\": \"sync\",\r\n    \"processData\": {\r\n        \"assignedToDog\": \"Dog\",\r\n        \"assignedToHuman\": \"Human\",\r\n        \"serviceTask1_input\": {\r\n            \"reqType\": \"new\",\r\n            \"requestData\": {\r\n                \"key1\": \"Daemon\",\r\n                \"key2\": \"value2\"\r\n            }\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/startProcess",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"startProcess"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "publishMsg",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"_key\": \"Test1\",\r\n    \"message\" : \"globalMsgRef\",\r\n    \"processInstanceId\": 1636713144606789632\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/publishMsg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"publishMsg"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

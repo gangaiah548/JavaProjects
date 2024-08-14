@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: pravah
+  name: pravah
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: pravah
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: pravah
+    spec:
+      containers:
+        - env:
+            - name: APP_ENV
+              value: DEV
+            - name: ARANGO_ADDR
+              value: http://arangodb-cluster-ea.arangodb.svc:8529
+            - name: ARANGO_DB_COLLECTION_NAME
+              value: processDeploymentCollection
+            - name: ARANGO_DB_NAME
+              value: processDeployment
+            - name: ARANGO_PASSWORD
+              value: pravahAdmin
+            - name: ARANGO_USER
+              value: pravahUser
+            - name: BIND_IP
+              value: 0.0.0.0
+            - name: ENABLE_ZBM
+              value: "true"
+            - name: GIN_MODE
+              value: release
+            - name: HAZELCAST_HOST
+              value: hz-hazelcast.hazelcast.svc.cluster.local
+            - name: HAZELCAST_PORT
+              value: "5701"
+            - name: LOGGING_LEVEL
+              value: DEBUG
+            - name: MAX_ENGINE_INSTANCE
+              value: "4"
+            - name: MAX_PROCESS_INSTANCES_PER_ENGINE
+              value: "25"
+            - name: PORT
+              value: "8080"
+          image: pravah:0.0.3
+          name: pravah
+          ports:
+            - containerPort: 8080
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.kompose.service: pravah
+  name: pravah
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    io.kompose.service: pravah
+status:
+  loadBalancer: {}

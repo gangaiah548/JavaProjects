@@ -1,0 +1,84 @@
+pipeline {
+
+   agent any
+  
+  environment
+   {
+    buildnumber = "${env.BUILD_NUMBER}"
+    branchname = "feature/PESM-154-returning-response-startprocess"
+   }    
+   
+   tools{
+//specify gradle and golang id from your jenkins
+   jdk 'JAVA_HOME'
+   gradle 'gradle_new'
+   go 'golang' 
+   
+   }
+
+   stages {
+
+       stage('Git-clone'){
+
+           steps{
+                catchError(buildResult: 'success', stageResult: 'FAILURE') {
+                git branch: "${branchname}", credentialsId: 'bitbucket', url: 'https://balavupparapalli@bitbucket.org/fsstech/pravah.git'
+                  sh '''
+                   ls -la
+                   '''
+                }
+            }
+
+       }
+
+         stage('Build Docker Image'){
+            steps{
+                     sh '''
+                        docker build -t pravah:returning-response.v${buildnumber} .
+
+                    '''
+                  
+         }
+       } 
+       
+       stage('Push Docker Image to Amazon ECR') {
+            steps {
+                script {
+                    // Use the stored AWS credentials
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkinsIAMuserawscredentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                // Log in to Amazon ECR
+                sh("aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 371699778015.dkr.ecr.ap-south-1.amazonaws.com/pravah-returning-response")
+                        
+                // Tag Docker image
+                sh "docker tag pravah:returning-response.v${buildnumber} 371699778015.dkr.ecr.ap-south-1.amazonaws.com/pravah-returning-response:returning-response.v${buildnumber}"
+                        
+                // Push Docker image
+                sh "docker push 371699778015.dkr.ecr.ap-south-1.amazonaws.com/pravah-returning-response:returning-response.v${buildnumber}"
+                    }
+                }
+            }
+        }
+       
+        
+       stage('Update Docker Image version in ArgoCD repository'){
+            steps{
+            git branch: 'master', credentialsId: 'bitbucket', url: 'https://balavupparapalli@bitbucket.org/fsstech/pravah-gitops.git'
+            withCredentials([usernamePassword(credentialsId: 'bitbucket', passwordVariable: 'password', usernameVariable: 'username')]) {
+            dir('returning-response') {
+            sh """#!/bin/bash
+            cat pravah.yaml | grep image
+            sed -i 's|image: .*|image: 371699778015.dkr.ecr.ap-south-1.amazonaws.com/pravah-returning-response:returning-response.v${buildnumber}|' pravah.yaml
+            cat pravah.yaml | grep image
+            git add pravah.yaml
+            git commit -m "updated yaml"
+            git push https://${username}:${password}@bitbucket.org/fsstech/pravah-gitops.git
+                
+              """
+            }
+          }
+        } 
+       } 
+       
+  }
+   
+}

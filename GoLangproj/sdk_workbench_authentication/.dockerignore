@@ -1,0 +1,11 @@
+test
+test/*
+**/*_test.go
+.gitignore
+.dockerignore
+.vscode
+.git
+docker-compose.yaml
+Dockerfile
+README.md
+*.postman_collection.json
