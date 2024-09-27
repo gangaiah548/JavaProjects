@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: zbm
+  name: zbm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: zbm
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: zbm
+    spec:
+      containers:
+        - env:
+            - name: zeebe.client.worker.hazelcast.connection
+              value: hz-hazelcast.hazelcast.svc.cluster.local:5701
+          image: ghcr.io/camunda-community-hub/zeebe-simple-monitor:2.4.1
+          name: zbm
+          ports:
+            - containerPort: 8082
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.kompose.service: zbm
+  name: zbm
+spec:
+  ports:
+    - name: "8082"
+      port: 8082
+      targetPort: 8082
+  selector:
+    io.kompose.service: zbm
+status:
+  loadBalancer: {}

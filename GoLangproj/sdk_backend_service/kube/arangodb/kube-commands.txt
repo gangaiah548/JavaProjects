@@ -1,0 +1,11 @@
+kubectl create namespace arangodb
+kubectl apply -k kustomize
+kubectl apply -f arangodb-storage.yaml
+kubectl apply -f arangodb-single.yaml || kubectl apply -f arangodb-cluster.yaml 
+
+minikube service (single/cluster)-ea -n arangodb
+
+create user with admin right
+
+** https://github.com/arangodb/kube-arangodb/tree/master/examples **
+** https://www.arangodb.com/docs/3.9/deployment-kubernetes-deployment-resource.html **

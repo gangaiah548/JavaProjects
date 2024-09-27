@@ -1,0 +1,1 @@
+kubectl apply -f zbm-deployment.yaml -n pravah

@@ -1,0 +1,27 @@
+apiVersion: "database.arangodb.com/v1"
+kind: "ArangoDeployment"
+metadata:
+  name: "arangodb-cluster"
+spec:
+  mode: Cluster
+  tls:
+    caSecretName: None
+  auth:
+    jwtSecretName: None
+  environment: Development
+  agents:
+    count: 3
+    args:
+      - --log.level=debug
+    resources:
+      requests:
+        storage: 2Gi
+    storageClassName: my-local-ssd
+  dbservers:
+    count: 5
+    resources:
+      requests:
+        storage: 2Gi
+    storageClassName: my-local-ssd
+  coordinators:
+    count: 3

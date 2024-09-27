@@ -1,0 +1,26 @@
+package constants
+
+type CValue string
+
+const (
+	EXEC_MODE_SYNC  CValue = "sync"
+	EXEC_MODE_ASYNC CValue = "async"
+
+	PROCESS_STATUS_ACTIVE   CValue = "active"
+	PROCESS_STATUS_INACTIVE CValue = "inactive"
+
+	ARANGO_DB_CREATION_MODE_NONE   CValue = "None"
+	ARANGO_DB_CREATION_MODE_CREATE CValue = "Create"
+	ARANGO_DB_CREATION_MODE_UPDATE CValue = "Update"
+
+	DEPLOYMENT_CONTROLLER_FORM_VALUE_KEY         CValue = "_key"
+	DEPLOYMENT_CONTROLLER_FORM_VALUE_TITLE       CValue = "title"
+	DEPLOYMENT_CONTROLLER_FORM_VALUE_DESCRIPTION CValue = "description"
+	DEPLOYMENT_CONTROLLER_FORM_VALUE_STATUS      CValue = "status"
+	DEPLOYMENT_CONTROLLER_FORM_VALUE_POOL_SIZE   CValue = "poolSize"
+
+	PRODUCT_NAME CValue="name"
+	PRODUCT_ID CValue="id"
+	PRODUCT_DESCRIPTION CValue = "description"
+	PRODUCT_PRiCE CValue = "price"
+)

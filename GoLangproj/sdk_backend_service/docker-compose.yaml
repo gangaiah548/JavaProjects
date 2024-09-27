@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+  pravah:
+   build:
+     context: .
+     dockerfile: Dockerfile
+     tags:
+       - "pravah:0.0.1"
+     args:
+       - ENV=local
+   container_name: pravah
+   restart: unless-stopped
+   environment:
+     - APP_ENV=DEV
+     - GIN_MODE=release
+     - PORT=8080
+     - BIND_IP=0.0.0.0
+     - LOGGING_LEVEL=DEBUG
+     - ARANGO_ADDR=http://arangodb:8529
+     - ARANGO_USER=root
+     - ARANGO_PASSWORD=arangoadmin
+     - ARANGO_DB_NAME=processDeployment
+     - ARANGO_DB_COLLECTION_NAME=processDeploymentCollection
+     - MAX_PROCESS_INSTANCES_PER_ENGINE=25
+     - MAX_ENGINE_INSTANCE=4
+     - ENABLE_ZBM=false
+     - HAZELCAST_HOST=hazelcast
+     - HAZELCAST_PORT=5701
+   ports:
+     - "8080:8080"
+   depends_on:
+     arangodb:
+      condition: service_healthy
+     hazelcast:
+      condition: service_started
+     zbm:
+      condition: service_started
+  arangodb:
+    image: arangodb:3.10
+    container_name: arangodb
+    environment:
+      - ARANGO_ROOT_PASSWORD=arangoadmin
+    ports:
+      - "8529:8529"
+    volumes:
+      - /tmp/arangodb:/var/lib/arangodb3
+    healthcheck:
+      # Use => docker inspect --format "{{json .State.Health }}" arangodb | jq to get healthcheck output
+      test: ["CMD", "wget", "--no-check-certificate","-O", "version" ,"--header=Authorization: Basic cm9vdDphcmFuZ29hZG1pbg==", "http://arangodb:8529/_api/version" ]
+      #interval: 1m30s
+      timeout: 5s
+      retries: 10
+      #start_period: 40s
+  hazelcast:
+    image: hazelcast/hazelcast:latest
+    container_name: hazelcast
+    ports:
+      - "5701:5701"
+  zbm:
+    image: ghcr.io/camunda-community-hub/zeebe-simple-monitor:2.4.1
+    container_name: zbm
+    ports:
+      - "8082:8082"
+    environment:
+      - zeebe.client.worker.hazelcast.connection=hazelcast:5701
