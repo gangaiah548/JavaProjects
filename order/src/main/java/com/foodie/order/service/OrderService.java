@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.foodie.order.Entity.Dish;
 import com.foodie.order.Entity.MenuItem;
 import com.foodie.order.Entity.Order;
+import com.foodie.order.Exception.MenuItemNotFoundException;
+import com.foodie.order.Exception.OrderNotFoundException;
 import com.foodie.order.repository.MenuItemRepository;
 import com.foodie.order.repository.OrderRepository;
 
@@ -27,9 +29,9 @@ public class OrderService {
 	        return orderRepository.findAll();
 	    }
 
-	    public Optional<Order> getOrderById(Long id) {
-	        return orderRepository.findById(id);
-	    }
+	    public Order getOrderById(Long id) {
+	        return orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+	        }
 
 	    public Order createOrder(Order order, List<Long> menuItemIds, List<Integer> quantities) {
 	        // For each dish in the order, fetch the MenuItem from RestaurantDB
@@ -38,7 +40,7 @@ public class OrderService {
 	            int quantity = quantities.get(i);
 
 	            MenuItem menuItem = menuItemRepository.findById(menuItemId)
-	                .orElseThrow(() -> new IllegalArgumentException("MenuItem not found with id: " + menuItemId));
+	                .orElseThrow(() -> new MenuItemNotFoundException("MenuItem not found with id: " + menuItemId));
 
 	            Dish dish = new Dish();
 	            dish.setMenuItem(menuItem);
@@ -53,7 +55,8 @@ public class OrderService {
 	    }
 
 	    public void deleteOrder(Long id) {
-	        orderRepository.deleteById(id);
+	    	 Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+	         orderRepository.delete(order);
 	    }
 }
 

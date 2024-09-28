@@ -1,0 +1,18 @@
+# Use an official OpenJDK as a parent image
+FROM openjdk:17-jdk-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Add a volume to store logs
+VOLUME /app/logs
+
+# Copy the WAR file from the build context to the container
+# Replace 'order-service.war' with the actual name of your WAR file
+COPY build/libs/order-service.war /app/order-service.war
+
+# Expose the port on which your service runs
+EXPOSE 8080
+
+# Run the WAR file
+ENTRYPOINT ["java", "-jar", "/app/order-service.war"]

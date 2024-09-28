@@ -1,0 +1,103 @@
+pipeline {
+    agent any
+
+    environment {
+        // Set up any environment variables you need, e.g., AWS credentials
+        AWS_REGION = 'us-east-1'
+        EKS_CLUSTER = 'your-eks-cluster'
+        KUBECONFIG_PATH = '/var/lib/jenkins/.kube/config'
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                // Checkout code from Git (assumes you have a Git repository)
+                git branch: 'main', url: 'https://github.com/your-organization/your-order-service-repo.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Build the Spring Boot project using Gradle
+                sh './gradlew clean build'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                // Run the unit tests
+                sh './gradlew test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                // Package the application as a WAR file (assuming it's a WAR project)
+                sh './gradlew war'
+            }
+
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/build/libs/*.war', allowEmptyArchive: false
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                // Build the Docker image for the application
+                script {
+                    def imageName = "your-docker-repo/order-service:${env.BUILD_ID}"
+                    sh "docker build -t ${imageName} ."
+                    sh "docker tag ${imageName} your-docker-repo/order-service:latest"
+                }
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                // Push the Docker image to your Docker repository (e.g., DockerHub, ECR)
+                script {
+                    def imageName = "your-docker-repo/order-service:${env.BUILD_ID}"
+                    withCredentials([string(credentialsId: 'docker-credentials', variable: 'DOCKER_PASSWORD')]) {
+                        sh "echo ${DOCKER_PASSWORD} | docker login --username your-docker-username --password-stdin"
+                        sh "docker push ${imageName}"
+                        sh "docker push your-docker-repo/order-service:latest"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                // Deploy the Docker image to your AWS EKS or on-premises Kubernetes cluster
+                script {
+                    def imageName = "your-docker-repo/order-service:${env.BUILD_ID}"
+                    
+                    // Assuming you have a Kubernetes deployment YAML file (deployment.yaml) ready
+                    // Update the image in the Kubernetes deployment file and apply it
+                    sh """
+                    sed -i 's|image: .*$|image: ${imageName}|' k8s/deployment.yaml
+                    kubectl apply -f k8s/deployment.yaml --kubeconfig=${KUBECONFIG_PATH}
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up the workspace after every run
+            cleanWs()
+        }
+        success {
+            // Notify on successful build and deployment
+            echo 'Order service successfully built and deployed!'
+        }
+        failure {
+            // Notify on failure
+            echo 'Order service build or deployment failed.'
+        }
+    }
+}
