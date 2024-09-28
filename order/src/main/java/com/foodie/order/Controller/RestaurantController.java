@@ -10,11 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.foodie.order.Entity.Restaurant;
 import com.foodie.order.service.RestaurantService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/restaurants")
+@Tag(name = "Order Management restaurants", description = "APIs related to Order Management restaurants")
 public class RestaurantController {
 
     @Autowired

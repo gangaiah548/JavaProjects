@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.foodie.order.Entity.MenuItem;
 import com.foodie.order.service.MenuItemService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/menu-items")
+@Tag(name = "Order Management menu-items", description = "APIs related to Order Management menu-items")
 public class MenuItemController {
 
     @Autowired

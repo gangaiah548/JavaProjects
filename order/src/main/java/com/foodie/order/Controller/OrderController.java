@@ -18,11 +18,15 @@ import com.foodie.order.Entity.ModelOrder;
 import com.foodie.order.Entity.Order;
 import com.foodie.order.service.OrderService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/orders")
+@Tag(name = "Order Management", description = "APIs related to Order Management")
 public class OrderController {
 
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
@@ -31,6 +35,7 @@ public class OrderController {
 	private OrderService orderService;
 
 	@GetMapping
+    @Operation(summary = "Get all orders", description = "Retrieve a list of all orders")
 	public ResponseEntity<List<Order>> getAllOrders() {
 		logger.info("Fetching all orders");
 		List<Order> orders = orderService.getAllOrders();
@@ -40,6 +45,7 @@ public class OrderController {
 
 	// Get order by ID
 	@GetMapping("/{orderId}")
+    @Operation(summary = "Get order by ID", description = "Retrieve an order by its ID")
 	public ResponseEntity<Order> getOrderById(@PathVariable Long orderId) {
 		logger.info("Fetching order with ID: {}", orderId);
 		Order order = orderService.getOrderById(orderId);
@@ -59,6 +65,7 @@ public class OrderController {
 	}
 
 	@PostMapping
+	@Operation(summary = "Create an order", description = "Create a new order")
 	public ResponseEntity<Order> createOrder(@RequestBody ModelOrder order) {
 		logger.info("Creating order for customer: {}", order.getCustomerName());
 		Order newOrder = new Order();
